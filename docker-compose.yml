@@ -1,0 +1,73 @@
+# Yerel geliştirme / kurulum için PostgreSQL (ve isteğe bağlı olarak API + Web).
+#   Yalnızca veritabanı:   docker compose up -d db
+#   Her şey:               docker compose --profile app up -d --build
+# Parolalar .env dosyasından okunur (.env.example'ı kopyalayıp doldurun). Varsayılan parola YOKTUR.
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-suttcrm}
+      POSTGRES_USER: ${POSTGRES_USER:-suttcrm}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD .env dosyasında tanımlanmalı}
+    ports:
+      # Yalnızca bu bilgisayardan erişim (127.0.0.1). Ağa açmayın.
+      - "127.0.0.1:${POSTGRES_PORT:-5433}:5432"
+    volumes:
+      - suttcrm-db:/var/lib/postgresql/data
+      - ./backups:/backups
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-suttcrm} -d ${POSTGRES_DB:-suttcrm}"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  api:
+    profiles: ["app"]
+    build:
+      context: .
+      dockerfile: src/SutTicaretCRM.Api/Dockerfile
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT:-Production}
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__Default: Host=db;Port=5432;Database=${POSTGRES_DB:-suttcrm};Username=${POSTGRES_USER:-suttcrm};Password=${POSTGRES_PASSWORD}
+      Jwt__Key: ${JWT_KEY:?JWT_KEY .env dosyasında tanımlanmalı}
+      Seed__AdminUserName: ${ADMIN_USERNAME:-admin}
+      Seed__AdminPassword: ${ADMIN_PASSWORD:?ADMIN_PASSWORD .env dosyasında tanımlanmalı}
+      Storage__Root: /data/storage
+      # Canlı resmî gönderim: yalnızca TEST doğrulaması bitince .env içinde INVOICE_LIVE_SENDING=true yapın (docs/invoice-integration.md)
+      Invoice__LiveSendingEnabled: ${INVOICE_LIVE_SENDING:-false}
+      # e-Arşiv ağ geçidi (opsiyonel; --profile gateway ile birlikte). Boşsa kapalı.
+      Invoice__Gateway__Url: ${INVOICE_GATEWAY_URL:-}
+      Invoice__Gateway__Token: ${GATEWAY_TOKEN:-}
+      Invoice__Gateway__Environment: ${GIB_ENV:-TEST}
+      Invoice__Gateway__AllowRemote: "true"   # yalnızca compose iç ağındaki "gateway" servisi; dışarı yayınlanmaz
+      Invoice__EnableMockProvider: "false"
+    volumes:
+      - suttcrm-files:/data/storage
+    ports:
+      - "127.0.0.1:${API_PORT:-5080}:8080"
+
+  gateway:
+    profiles: ["gateway"]
+    build:
+      context: ./invoice-gateway
+    restart: unless-stopped
+    environment:
+      GATEWAY_TOKEN: ${GATEWAY_TOKEN:?GATEWAY_TOKEN .env dosyasında tanımlanmalı (>=32 karakter)}
+      GIB_USER: ${GIB_USER:?GIB_USER .env dosyasında tanımlanmalı}
+      GIB_PASSWORD: ${GIB_PASSWORD:?GIB_PASSWORD .env dosyasında tanımlanmalı}
+      GIB_ENV: ${GIB_ENV:-TEST}
+      GIB_ALLOW_PROD: ${GIB_ALLOW_PROD:-no}
+    volumes:
+      - suttcrm-gateway:/data      # mükerrer fatura korumasının hafızası: SİLMEYİN, yedekleyin
+    # ports yok: yalnızca api servisi erişir
+
+volumes:
+  suttcrm-gateway:
+  suttcrm-db:
+  suttcrm-files:

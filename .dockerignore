@@ -1,0 +1,12 @@
+**/bin/
+**/obj/
+**/node_modules/
+**/dist/
+.env
+.env.*
+backups/
+storage/
+tests/
+invoice-gateway/
+docs/
+.git/

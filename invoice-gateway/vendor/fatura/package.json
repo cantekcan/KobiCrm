@@ -1,0 +1,8 @@
+{
+  "name": "fatura",
+  "version": "0.2.1-24cba00",
+  "description": "f/fatura (MIT) — commit 24cba00060c3678fd85b94da5aaffb7ea7d048f1 (2026-08-24) kaynak koddan derlenmiş kopya. npm'deki 0.2.1 sürümü bu düzeltmeden ÖNCEDİR; kullanmayın.",
+  "main": "dist/index.js",
+  "license": "MIT",
+  "private": true
+}

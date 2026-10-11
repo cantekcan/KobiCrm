@@ -1,0 +1,25 @@
+# Sırlar ve yerel yapılandırma — ASLA git'e eklenmez
+.env
+.env.*
+!.env.example
+appsettings.*.local.json
+*.pfx
+*.key
+
+# Yedekler (müşteri/vergi verisi içerir) ve yüklenen dosyalar
+backups/*
+!backups/.gitkeep
+storage/
+src/SutTicaretCRM.Api/storage/
+invoice-gateway/data/
+
+# Derleme çıktıları
+bin/
+obj/
+*.user
+.vs/
+TestResults/
+src/SutTicaretCRM.Api/wwwroot/
+src/SutTicaretCRM.Web/dist/
+node_modules/
+*.log

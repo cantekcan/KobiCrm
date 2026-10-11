@@ -1,0 +1,23 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.COMMANDS = void 0;
+exports.COMMANDS = {
+    createDraftInvoice: ["EARSIV_PORTAL_FATURA_OLUSTUR", "RG_BASITFATURA"],
+    getAllInvoicesByDateRange: ["EARSIV_PORTAL_TASLAKLARI_GETIR", "RG_BASITTASLAKLAR"],
+    getAllInvoicesIssuedToMeByDateRange: ["EARSIV_PORTAL_ADIMA_KESILEN_BELGELERI_GETIR", "RG_ALICI_TASLAKLAR"],
+    signDraftInvoice: ["EARSIV_PORTAL_FATURA_HSM_CIHAZI_ILE_IMZALA", "RG_BASITTASLAKLAR"],
+    getInvoiceHTML: ["EARSIV_PORTAL_FATURA_GOSTER", "RG_BASITTASLAKLAR"],
+    cancelDraftInvoice: ["EARSIV_PORTAL_FATURA_SIL", "RG_BASITTASLAKLAR"],
+    getRecipientDataByTaxIDOrTRID: ["SICIL_VEYA_MERNISTEN_BILGILERI_GETIR", "RG_BASITFATURA"],
+    getSignPhoneNumber: ["EARSIV_PORTAL_TELEFONNO_SORGULA", "RG_SMSONAY"],
+    sendSignSMSCode: ["EARSIV_PORTAL_SMSSIFRE_GONDER", "RG_SMSONAY"],
+    /**
+     * İmzalama komutu. GİB bu servisi okunabilir addan opak bir kimliğe taşıdı;
+     * `EARSIV_PORTAL_SMSSIFRE_DOGRULA` canlı portalda
+     * "Service Not Found" döner.
+     */
+    verifySMSCode: ["0lhozfib5410mp", "RG_SMSONAY"],
+    getUserData: ["EARSIV_PORTAL_KULLANICI_BILGILERI_GETIR", "RG_KULLANICI"],
+    updateUserData: ["EARSIV_PORTAL_KULLANICI_BILGILERI_KAYDET", "RG_KULLANICI"],
+};
+//# sourceMappingURL=commands.js.map

@@ -1,0 +1,15 @@
+{
+  "name": "sutticaretcrm-invoice-gateway",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "SutTicaretCRM için e-Arşiv portal (f/fatura) ağ geçidi. Yalnızca yerel makineden erişilir; GİB kimlik bilgileri yalnızca burada tutulur.",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node src/index.mjs",
+    "test": "node --test \"test/*.test.mjs\""
+  },
+  "dependencies": {}
+}
